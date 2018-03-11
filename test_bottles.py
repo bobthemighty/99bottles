@@ -13,26 +13,28 @@ class BottleCount(namedtuple('_bottlecount', 'value')):
             return "1 bottle of beer"
         return f"{self.value} bottles of beer"
 
+class BottleCounter:
+    def __init__(self, start):
+        self.current = start
+
+    def __next__(self):
+        if self.current == 0:
+            return BottleCount(0), BottleCount(99)
+        return BottleCount(self.current), BottleCount(self.current - 1)
+
 
 class BottleSong:
 
-    def describe_bottles(self, num):
-        if num == 1:
-            return "1 bottle"
-        if num == 0:
-            return "No more bottles"
-        return f"{num} bottles"
-
     def verse(self, num):
-        current = BottleCount(num)
-        next = BottleCount(num - 1) if num > 0 else BottleCount(99)
+        counter = BottleCounter(num)
+        current, next_ = next(counter)
         if num > 0:
             return clean(f"""
             {current} on the wall
             {current}
             Take one down
             Pass it around
-            {next} on the wall
+            {next_} on the wall
             """)
         else:
             return clean(f"""
@@ -40,7 +42,7 @@ class BottleSong:
             {current}
             Go to the store
             Buy some more
-            {next} on the wall
+            {next_} on the wall
             """)
 
 
