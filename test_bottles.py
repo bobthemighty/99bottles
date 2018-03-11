@@ -8,6 +8,8 @@ class BottleSong:
     def describe_bottles(self, num):
         if num == 1:
             return "1 bottle"
+        if num == 0:
+            return "No more bottles"
         return f"{num} bottles"
 
     def verse(self, num):
@@ -50,6 +52,17 @@ def test_next_to_penultimate_verse():
         Take one down
         Pass it around
         1 bottle of beer on the wall
+    """)
+
+
+def test_penultimate_verse():
+    song = BottleSong()
+    assert song.verse(1) == clean("""
+        1 bottle of beer on the wall
+        1 bottle of beer
+        Take one down
+        Pass it around
+        No more bottles of beer on the wall
     """)
 
 
