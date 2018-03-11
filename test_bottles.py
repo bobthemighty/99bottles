@@ -13,13 +13,22 @@ class BottleSong:
         return f"{num} bottles"
 
     def verse(self, num):
-        return clean(f"""
-        {self.describe_bottles(num)} of beer on the wall
-        {self.describe_bottles(num)} of beer
-        Take one down
-        Pass it around
-        {self.describe_bottles(num - 1)} of beer on the wall
-        """)
+        if num > 0:
+            return clean(f"""
+            {self.describe_bottles(num)} of beer on the wall
+            {self.describe_bottles(num)} of beer
+            Take one down
+            Pass it around
+            {self.describe_bottles(num - 1)} of beer on the wall
+            """)
+        else:
+            return clean(f"""
+            {self.describe_bottles(num)} of beer on the wall
+            {self.describe_bottles(num)} of beer
+            Go to the store
+            Buy some more
+            99 bottles of beer on the wall
+            """)
 
 
 def test_first_verse():
@@ -65,4 +74,12 @@ def test_penultimate_verse():
         No more bottles of beer on the wall
     """)
 
-
+def test_final_verse():
+    song = BottleSong()
+    assert song.verse(0) == clean("""
+        No more bottles of beer on the wall
+        No more bottles of beer
+        Go to the store
+        Buy some more
+        99 bottles of beer on the wall
+    """)
