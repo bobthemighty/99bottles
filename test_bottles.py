@@ -1,7 +1,18 @@
+from collections import namedtuple
 from textwrap import dedent
 
 def clean(s):
     return dedent(s.lstrip('\n'))
+
+class BottleCount(namedtuple('_bottlecount', 'value')):
+
+    def __str__(self):
+        if self.value == 0:
+            return "No more bottles of beer"
+        elif self.value == 1:
+            return "1 bottle of beer"
+        return f"{self.value} bottles of beer"
+
 
 class BottleSong:
 
@@ -13,21 +24,23 @@ class BottleSong:
         return f"{num} bottles"
 
     def verse(self, num):
+        current = BottleCount(num)
+        next = BottleCount(num - 1) if num > 0 else BottleCount(99)
         if num > 0:
             return clean(f"""
-            {self.describe_bottles(num)} of beer on the wall
-            {self.describe_bottles(num)} of beer
+            {current} on the wall
+            {current}
             Take one down
             Pass it around
-            {self.describe_bottles(num - 1)} of beer on the wall
+            {next} on the wall
             """)
         else:
             return clean(f"""
-            {self.describe_bottles(num)} of beer on the wall
-            {self.describe_bottles(num)} of beer
+            {current} on the wall
+            {current}
             Go to the store
             Buy some more
-            99 bottles of beer on the wall
+            {next} on the wall
             """)
 
 
