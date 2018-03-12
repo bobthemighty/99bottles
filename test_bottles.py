@@ -48,8 +48,8 @@ class Verse:
 
 class FinalVerse(Verse):
 
-    def matches(self, count):
-        return count == 0
+    def matches(self, count:BottleCount):
+        return count.value == 0
 
     @property
     def action(self):
@@ -61,16 +61,17 @@ class FinalVerse(Verse):
 
 class BottleSong:
 
+    _verses = [
+        Verse(),
+        FinalVerse()
+    ]
+
     def verse(self, num):
         counter = BottleCounter(num)
         current, next_ = next(counter)
-        v = Verse()
-
-        if v.matches(current):
-            return v.sing(current, next_)
-        else:
-            return FinalVerse().sing(current, next_)
-
+        for v in self._verses:
+            if v.matches(current):
+                return v.sing(current, next_)
 
 def test_first_verse():
     song = BottleSong()
