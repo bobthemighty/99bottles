@@ -16,14 +16,23 @@ class BottleCount(namedtuple('_bottlecount', 'value')):
         return f"{self.value} bottles of beer"
 
 class BottleCounter:
-    def __init__(self, start):
+    def __init__(self, start, end=0):
         self.current = start
+        self.end = end
+        self.done = False
 
     def __next__(self):
-        if self.current == 0:
-            return BottleCount(0), BottleCount(99)
+        if self.done:
+            raise StopIteration()
+        if self.current == self.end:
+            self.done = True
+        current = self.current
+        _next = 99 if current == 0 else current - 1
+        self.current = _next
+        return BottleCount(current), BottleCount(_next)
 
-        return BottleCount(self.current), BottleCount(self.current - 1)
+    def __iter__(self):
+        return self
 
 
 class Verse:
@@ -66,12 +75,23 @@ class BottleSong:
         FinalVerse()
     ]
 
-    def verse(self, num):
-        counter = BottleCounter(num)
-        current, next_ = next(counter)
+    def sing(self, current, next_):
         for v in self._verses:
             if v.matches(current):
                 return v.sing(current, next_)
+
+
+    def verse(self, num):
+        counter = BottleCounter(num)
+        current, next_ = next(counter)
+        return self.sing(current, next_)
+
+    def verses(self, start, end=0):
+        counter = BottleCounter(start, end)
+        return "\n".join(
+            self.sing(current, next_)
+            for current, next_ in counter)
+
 
 def test_first_verse():
     song = BottleSong()
@@ -124,4 +144,20 @@ def test_final_verse():
         Go to the store
         Buy some more
         99 bottles of beer on the wall
+    """)
+
+def test_a_couple_of_verses():
+    song = BottleSong()
+    assert song.verses(99, 98) == clean("""
+        99 bottles of beer on the wall
+        99 bottles of beer
+        Take one down
+        Pass it around
+        98 bottles of beer on the wall
+
+        98 bottles of beer on the wall
+        98 bottles of beer
+        Take one down
+        Pass it around
+        97 bottles of beer on the wall
     """)
