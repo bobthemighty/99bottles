@@ -1,6 +1,7 @@
 from collections import namedtuple
 from textwrap import dedent
 
+
 def clean(s):
     return dedent(s.lstrip('\n'))
 
@@ -11,6 +12,7 @@ class BottleCount(namedtuple('_bottlecount', 'value')):
             return "No more bottles of beer"
         elif self.value == 1:
             return "1 bottle of beer"
+
         return f"{self.value} bottles of beer"
 
 class BottleCounter:
@@ -20,7 +22,23 @@ class BottleCounter:
     def __next__(self):
         if self.current == 0:
             return BottleCount(0), BottleCount(99)
+
         return BottleCount(self.current), BottleCount(self.current - 1)
+
+
+class Verse:
+
+    def matches(self, count: BottleCount):
+        return count.value > 0
+
+    def sing(self, current, _next):
+        return (f"{current} on the wall\n"
+                f"{current}\n"
+                "Take one down\n"
+                "Pass it around\n"
+                f"{_next} on the wall\n"
+                )
+
 
 
 class BottleSong:
@@ -28,14 +46,10 @@ class BottleSong:
     def verse(self, num):
         counter = BottleCounter(num)
         current, next_ = next(counter)
-        if num > 0:
-            return clean(f"""
-            {current} on the wall
-            {current}
-            Take one down
-            Pass it around
-            {next_} on the wall
-            """)
+        v = Verse()
+
+        if v.matches(current):
+            return v.sing(current, next_)
         else:
             return clean(f"""
             {current} on the wall
