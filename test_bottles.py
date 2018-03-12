@@ -2,9 +2,6 @@ from collections import namedtuple
 from textwrap import dedent
 
 
-def clean(s):
-    return dedent(s.lstrip('\n'))
-
 class BottleCount(namedtuple('_bottlecount', 'value')):
 
     def __str__(self):
@@ -25,14 +22,18 @@ def BottleCounter(start, end):
 
 class Verse:
 
-    def matches(self, count: BottleCount):
-        return count.value > 0
+    def __init__(self, current, next_):
+        self.current = current
+        self.next = next_
 
-    def sing(self, current, _next):
-        return (f"{current} on the wall\n"
-                f"{current}\n"
+    def matches(self):
+        return self.current.value > 0
+
+    def sing(self):
+        return (f"{self.current} on the wall\n"
+                f"{self.current}\n"
                 f"{self.action}\n"
-                f"{_next} on the wall\n"
+                f"{self.next} on the wall\n"
                )
 
     @property
@@ -43,8 +44,12 @@ class Verse:
 
 class FinalVerse(Verse):
 
-    def matches(self, count: BottleCount):
-        return count.value == 0
+    def __init__(self, current, next_):
+        self.current = current
+        self.next = next_
+
+    def matches(self):
+        return self.current.value == 0
 
     @property
     def action(self):
@@ -55,14 +60,15 @@ class FinalVerse(Verse):
 class BottleSong:
 
     _verses = [
-        Verse(),
-        FinalVerse()
+        Verse,
+        FinalVerse
     ]
 
     def sing(self, current, next_):
         for v in self._verses:
-            if v.matches(current):
-                return v.sing(current, next_)
+            verse = v(current, next_)
+            if verse.matches():
+                return verse.sing()
 
     def verse(self, num):
         return self.verses(num, num)
@@ -73,6 +79,9 @@ class BottleSong:
             self.sing(current, next_)
             for current, next_ in counter)
 
+
+def clean(s):
+    return dedent(s.lstrip('\n'))
 
 def test_first_verse():
     song = BottleSong()
