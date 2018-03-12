@@ -27,7 +27,7 @@ class Verse:
         self.next = next_
 
     def matches(self):
-        return self.current.value > 0
+        return self.current.value > 1
 
     def sing(self):
         return (f"{self.current} on the wall\n"
@@ -53,10 +53,23 @@ class FinalVerse(Verse):
                 "Buy some more")
 
 
+class PenultimateVerse(Verse):
+
+    def matches(self):
+        return self.current.value == 1
+
+    @property
+    def action(self):
+        return ("Take it down\n"
+                "Pass it around")
+
+
+
 class BottleSong:
 
     _verses = [
         Verse,
+        PenultimateVerse,
         FinalVerse
     ]
 
@@ -116,7 +129,7 @@ def test_penultimate_verse():
     assert song.verse(1) == clean("""
         1 bottle of beer on the wall
         1 bottle of beer
-        Take one down
+        Take it down
         Pass it around
         No more bottles of beer on the wall
     """)
@@ -741,7 +754,7 @@ def test_whole_damned_song():
 
         1 bottle of beer on the wall
         1 bottle of beer
-        Take one down
+        Take it down
         Pass it around
         No more bottles of beer on the wall
 
