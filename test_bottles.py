@@ -82,9 +82,7 @@ class BottleSong:
 
 
     def verse(self, num):
-        counter = BottleCounter(num)
-        current, next_ = next(counter)
-        return self.sing(current, next_)
+        return self.verses(num, num)
 
     def verses(self, start, end=0):
         counter = BottleCounter(start, end)
