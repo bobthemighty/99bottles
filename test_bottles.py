@@ -15,24 +15,12 @@ class BottleCount(namedtuple('_bottlecount', 'value')):
 
         return f"{self.value} bottles of beer"
 
-class BottleCounter:
-    def __init__(self, start, end=0):
-        self.current = start
-        self.end = end
-        self.done = False
 
-    def __next__(self):
-        if self.done:
-            raise StopIteration()
-        if self.current == self.end:
-            self.done = True
-        current = self.current
-        _next = 99 if current == 0 else current - 1
-        self.current = _next
-        return BottleCount(current), BottleCount(_next)
+def BottleCounter(start, end):
 
-    def __iter__(self):
-        return self
+    for current in range(start, end - 1, -1):
+        next_ = 99 if current == 0 else current - 1
+        yield BottleCount(current), BottleCount(next_)
 
 
 class Verse:
@@ -45,7 +33,7 @@ class Verse:
                 f"{current}\n"
                 f"{self.action}\n"
                 f"{_next} on the wall\n"
-                )
+               )
 
     @property
     def action(self):
@@ -53,19 +41,15 @@ class Verse:
                 "Pass it around")
 
 
-
-
 class FinalVerse(Verse):
 
-    def matches(self, count:BottleCount):
+    def matches(self, count: BottleCount):
         return count.value == 0
 
     @property
     def action(self):
         return ("Go to the store\n"
                 "Buy some more")
-
-
 
 
 class BottleSong:
@@ -79,7 +63,6 @@ class BottleSong:
         for v in self._verses:
             if v.matches(current):
                 return v.sing(current, next_)
-
 
     def verse(self, num):
         return self.verses(num, num)
