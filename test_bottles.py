@@ -34,10 +34,28 @@ class Verse:
     def sing(self, current, _next):
         return (f"{current} on the wall\n"
                 f"{current}\n"
-                "Take one down\n"
-                "Pass it around\n"
+                f"{self.action}\n"
                 f"{_next} on the wall\n"
                 )
+
+    @property
+    def action(self):
+        return ("Take one down\n"
+                "Pass it around")
+
+
+
+
+class FinalVerse(Verse):
+
+    def matches(self, count):
+        return count == 0
+
+    @property
+    def action(self):
+        return ("Go to the store\n"
+                "Buy some more")
+
 
 
 
@@ -51,13 +69,7 @@ class BottleSong:
         if v.matches(current):
             return v.sing(current, next_)
         else:
-            return clean(f"""
-            {current} on the wall
-            {current}
-            Go to the store
-            Buy some more
-            {next_} on the wall
-            """)
+            return FinalVerse().sing(current, next_)
 
 
 def test_first_verse():
